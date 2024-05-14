@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-export type IRole = 'INTERN' | 'ENGINEER' | 'ADMIN';
+export type IRole = 'INTERN' | 'ENGINEER' | 'ADMIN' | 'DEV';
 export type IUser = {
   id?: any;
   name?: string;
@@ -16,7 +16,7 @@ export class UsersService {
       id: 1,
       name: 'Leanne Graham',
       email: 'Sincere@april.biz',
-      role: 'INTERN',
+      role: 'DEV',
     },
     {
       id: 2,
@@ -44,11 +44,36 @@ export class UsersService {
     },
   ];
 
-  findAll(role?: IRole) {
-    //check if role is passed
+  // findAll(role?: IRole) {
+  //   //check if role is passed
+  //   console.log('QUERY', role);
 
-    if (role) {
-      return this.users.filter((user) => user.role === role);
+  //   if (role) {
+  //     const withRole = this.users.filter((user) => user.role === role);
+  //     return withRole;
+  //   }
+  //   return {
+  //     msg: 'All Users',
+  //     length: this.users.length,
+  //     data: this.users,
+  //   };
+  // }
+  findAll(roles?: IRole | any) {
+    console.log('QUERY', roles);
+
+    if (roles) {
+      if (typeof roles === 'string') {
+        roles = [roles];
+      }
+
+      const filteredUsers = this.users.filter((user) =>
+        (roles as IRole[]).includes(user.role),
+      );
+      return {
+        msg: 'Filtered Users',
+        length: filteredUsers.length,
+        data: filteredUsers,
+      };
     }
     return {
       msg: 'All Users',
@@ -85,26 +110,12 @@ export class UsersService {
     };
   }
 
-  // update(
-  //   id: number,
-  //   updatedUser: { name?: string; email?: string; role?: IRole },
-  // ) {
-  //   this.users = this.users.map((user) => {
-  //     if (user.id === id) {
-  //       return { ...user, ...updatedUser };
-  //     }
-  //     return user;
-  //   });
-
-  //   return this.findOne(id);
-  // }
-
   update(
     id: number,
     updatedUser: {
       name?: string;
       email?: string;
-      role?: 'INTERN' | 'ENGINEER' | 'ADMIN';
+      role?: 'INTERN' | 'ENGINEER' | 'ADMIN' | 'DEV';
     },
   ) {
     this.users = this.users.map((user) => {

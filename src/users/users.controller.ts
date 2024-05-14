@@ -23,8 +23,8 @@ export class UsersController {
     */
 
   @Get() // GET /users or /users?role=value
-  findAll(@Query('role') role?: IRole) {
-    return this.usersService.findAll(role);
+  findAll(@Query('role') roles?: IRole) {
+    return this.usersService.findAll(roles);
   }
 
   @Post()
@@ -34,8 +34,6 @@ export class UsersController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() userUpdate: IUser) {
-    console.log('request body', userUpdate);
-
     return this.usersService.update(Number(id), userUpdate);
   }
 
