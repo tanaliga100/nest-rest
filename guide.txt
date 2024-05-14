@@ -1,0 +1,4 @@
+main.ts = instantiate the app and invoke the main function || entry point
+app.module.ts = main module, root module || specifies controllers and providers
+app.controller = app.controller is handling the route 
+app.service = is all the declartions of the functions or methods that used in the app.controller
