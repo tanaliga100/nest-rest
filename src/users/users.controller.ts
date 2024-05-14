@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
@@ -6,10 +7,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
+import { IRole, IUser, UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
   /*
     GET /users
     POST /users
@@ -17,86 +21,31 @@ export class UsersController {
     PATCH /users/:id
     DELETE /users/:id
     */
-  users = [
-    {
-      id: 1,
-      name: 'jordan',
-      role: 'intern',
-    },
-    {
-      id: 2,
-      name: 'iza',
-      role: 'interns',
-    },
-  ];
-  @Get()
-  findAll() {
-    return this.users;
+
+  @Get() // GET /users or /users?role=value
+  findAll(@Query('role') role?: IRole) {
+    return this.usersService.findAll(role);
   }
 
   @Post()
-  create(@Body() user: Record<string, never>) {
-    return {
-      msg: 'User Created',
-      user,
-    };
+  create(@Body() user: IUser) {
+    return this.usersService.create(user);
   }
 
-  // @Get('interns')
-  // findAllInterns() {
-  //   return {
-  //     msg: ' ALl interns',
-  //     data: [],
-  //   };
-  // }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() userUpdate: Record<string, never>) {
-    // const user = this.users.find((u) => u.id.toString() === id.toString());
-    // console.log('current_user', typeof user);
+  update(@Param('id') id: string, @Body() userUpdate: IUser) {
+    console.log('request body', userUpdate);
 
-    const userExist = this.users.find(
-      (user) => user.id.toString() === id.toString(),
-    );
-    console.log('userExist', userExist);
-
-    // if (!userUpdate) {
-    //   // throw new Error('No User with that ID');
-    //   return 'No User with that ID';
-    // }
-    return {
-      id,
-      ...userUpdate,
-    };
+    return this.usersService.update(Number(id), userUpdate);
   }
 
   @Delete(':id')
   delete(@Param('id') id: string) {
-    const user = this.users.find((u) => u.id.toString() === id.toString());
-    console.log('current_user', typeof user);
-
-    if (!user) {
-      // throw new Error('No User with that ID');
-      return 'No User with that ID';
-    }
-
-    return {
-      msg: `User.Deleted.with.id.${id}`,
-    };
+    return this.usersService.delete(Number(id));
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    const user = this.users.find((u) => u.id.toString() === id.toString());
-    console.log('current_user', typeof user);
-
-    if (!user) {
-      // throw new Error('No User with that ID');
-      return 'No User with that ID';
-    }
-
-    return user;
+    return this.usersService.findOne(+id);
   }
-
-  // return { id };
 }
