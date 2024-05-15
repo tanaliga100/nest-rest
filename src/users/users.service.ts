@@ -61,8 +61,6 @@ export class UsersService {
   //   };
   // }
   findAll(roles?: IRole | any) {
-    console.log('QUERY', roles);
-
     if (roles) {
       if (typeof roles === 'string') {
         roles = [roles];

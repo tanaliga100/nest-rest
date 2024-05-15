@@ -8,7 +8,7 @@ export class CreateBookDto {
 }
 
 export class BookDto {
-  id: number | string;
+  id?: number;
   name: string;
   createdAt: number;
   isEnglish: boolean;

@@ -32,33 +32,82 @@ export class BooksService {
     };
   }
 
-  findAll(eng?: any) {
+  findAll(isEnglish?: boolean, name?: string, from?: number) {
     // check
-    if (eng !== undefined) {
-      const filteredBooks = this.Books.filter((book) => book.isEnglish === eng);
+    // Initial filteredBooks array contains all books
+    let filteredBooks = this.Books;
 
-      return {
-        msg: 'Filtered Books',
-        length: filteredBooks.length,
-        filteredBooks,
-      };
+    // Filter by isEnglish if the parameter is provided
+    if (isEnglish !== undefined) {
+      filteredBooks = filteredBooks.filter(
+        (book) => book.isEnglish === isEnglish,
+      );
+    }
+    // Filter by name if the parameter is
+    if (name) {
+      filteredBooks = filteredBooks.filter((book) =>
+        book.name.toLowerCase().includes(name.toLowerCase()),
+      );
+    }
+    // Filter by date if the parameter is
+    if (from) {
+      filteredBooks = filteredBooks.filter((book) => book.createdAt >= from);
     }
     return {
-      msg: 'All Books',
-      length: this.Books.length,
-      books: this.Books,
+      msg: isEnglish !== undefined || name ? 'Filtered Books' : 'All Books',
+      length:
+        filteredBooks.length > 0
+          ? `Has ${filteredBooks.length} ${filteredBooks.length === 1 ? `record` : 'records'}`
+          : `Has no records`,
+      books: filteredBooks,
     };
   }
 
   findOne(id: number) {
+    const book = this.Books.find((book) => book.id === id);
+    if (book === undefined) {
+      return {
+        msg: 'No Record',
+      };
+    }
+    return {
+      msg: 'Fetched Book',
+      book,
+    };
     return `This action returns a #${id} book`;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
+  update(id?: number, updateBookDto?: UpdateBookDto) {
+    console.log('new book', updateBookDto);
+
+    //get bookk;
+    this.Books = this.Books.map((book) => {
+      if (book.id === id) {
+        return { ...book, ...updateBookDto };
+      }
+      return book;
+    });
+
+    // const updatedBook = {
+    //   ...currentBook,
+    //   updateBookDto,
+    // };
+    const updatedBook = this.Books.find((book) => book.id === Number(id));
+    return {
+      msg: `Updated Book`,
+      updatedBook,
+    };
+
     return `This action updates a #${id} book`;
   }
 
   remove(id: number) {
-    return `This action removes a #${id} book`;
+    this.Books = this.Books.filter((book) => book.id !== id);
+    const removedBook = `Book with id ${id} was deleted`;
+    const updated = this.findAll();
+    return {
+      msg: removedBook,
+      updated,
+    };
   }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -22,31 +23,35 @@ export class BooksController {
 
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
-    console.log('book to be added', createBookDto);
-
     return this.booksService.create(createBookDto);
   }
 
   @Get()
-  findAll(@Query('eng') eng?: any) {
-    console.log(typeof eng);
+  findAll(
+    @Query('eng') eng?: string,
+    @Query('name') name?: string,
+    @Query('from') from?: number,
+  ) {
     // conversion
     const isEng = eng === 'true' ? true : eng === 'false' ? false : undefined;
-    return this.booksService.findAll(isEng);
+    return this.booksService.findAll(isEng, name, from);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: ParseIntPipe) {
     return this.booksService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateBookDto: UpdateBookDto,
+  ) {
     return this.booksService.update(+id, updateBookDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.remove(+id);
   }
 }
